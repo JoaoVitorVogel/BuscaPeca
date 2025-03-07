@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: app-container
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - HASH_SALT=${HASH_SALT}
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    restart: unless-stopped
+    # Descomente as linhas abaixo se desejar montar volumes (por exemplo, para desenvolvimento)
+    # volumes:
+    #   - ./:/app
+  postgres:
+    image: postgres:15
+    container_name: postgres-database-container
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_pwd
+      POSTGRES_DB: automotive_parts_organizational_system
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    # Você pode comentar a linha abaixo se não precisar acessar o banco de dados fora do Docker
+    # ports:
+    #   - "5432:5432"
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
